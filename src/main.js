@@ -194,12 +194,22 @@ document.addEventListener('DOMContentLoaded', () => {
   let dragStartX, dragStartY;
   let bubbleStartX, bubbleStartY;
   let wasOpenOnDragStart = false;
+  let lastTouchTime = 0;
 
   // Mouse and Touch Drag Listeners
   mainBubble.addEventListener('mousedown', dragStart);
   mainBubble.addEventListener('touchstart', dragStart, { passive: true });
 
   function dragStart(e) {
+    if (e.type === 'touchstart') {
+      lastTouchTime = Date.now();
+    } else if (e.type === 'mousedown') {
+      // Prevent simulated mouse events on mobile touch devices
+      if (Date.now() - lastTouchTime < 600) {
+        return;
+      }
+    }
+
     // Track whether the menu was open when the interaction started
     wasOpenOnDragStart = navContainer.classList.contains('open');
     
