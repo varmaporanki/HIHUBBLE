@@ -5378,6 +5378,54 @@ body.chats-view-active #app-main-layout {
 }
 
 /* =========================================================
+   MOBILE SMOOTH TRANSITION KEYFRAMES
+   ========================================================= */
+
+@keyframes mobileSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mobileFadeScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes mobileChatSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes mobileModalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* =========================================================
    RESPONSIVE MEDIA QUERIES
    ========================================================= */
 
@@ -5489,94 +5537,137 @@ body.chats-view-active #app-main-layout {
     flex-wrap: wrap !important;
   }
 
-  /* Hide floating menu on mobile */
+  /* === FLOATING BUBBLE NAVIGATION ON MOBILE === */
+  /* Show the floating bubble nav on mobile (replaces bottom tab bar) */
   #floating-bubble-nav,
   .floating-nav-container,
+  #radial-menu-blur-overlay {
+    display: flex !important;
+  }
+
+  .floating-nav-container {
+    bottom: 24px !important;
+    z-index: 10000 !important;
+  }
+
+  .main-glow-bubble {
+    transform: scale(0.85);
+  }
+
+  .main-glow-bubble:hover {
+    transform: scale(0.95);
+  }
+
+  .radial-menu-wrapper {
+    transform: scale(0.85);
+  }
+
+  .radial-item-bubble {
+    --distance: 95px !important;
+  }
+
   #radial-menu-blur-overlay {
     display: none !important;
   }
 
-  /* Push content up to make space for bottom tab bar */
+  .floating-nav-container.open #radial-menu-blur-overlay {
+    display: block !important;
+  }
+
+  /* Push content up for floating bubble clearance */
   .main-content {
     padding-bottom: 80px !important;
   }
 
-  /* Mobile Bottom Navigation Bar */
+  /* Hide the old mobile bottom tab bar */
   .mobile-bottom-nav {
-    display: flex !important;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 68px;
-    background: rgba(13, 6, 28, 0.85); /* Premium glassmorphism dark background */
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    z-index: 999;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 8px;
-    padding-bottom: env(safe-area-inset-bottom);
-    box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.5);
+    display: none !important;
   }
 
-  .mobile-nav-btn {
-    background: transparent;
-    border: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    cursor: pointer;
-    font-size: 10px;
-    font-weight: 600;
-    gap: 4px;
-    position: relative;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 6px 12px;
-    border-radius: 12px;
-    width: 18%;
+  /* === HIDE GAME MODE TAB ON MOBILE === */
+  .mode-tab[data-chat-mode="game"] {
+    display: none !important;
   }
 
-  .mobile-nav-btn i {
-    width: 22px;
-    height: 22px;
-    transition: transform 0.25s ease, color 0.25s ease;
+  /* === HIDE MESSAGE INPUT BOX IN DM ON MOBILE === */
+  .chat-window-footer,
+  #chat-global-footer {
+    display: none !important;
   }
 
-  .mobile-nav-btn:hover {
-    color: var(--text-main);
+  /* === SMOOTHER TRANSITIONS FOR MOBILE === */
+  /* Smooth view transitions */
+  .main-content > .content-view {
+    transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 
-  .mobile-nav-btn.active {
-    color: #ff4fa3; /* neon pink */
+  .main-content > .content-view.active-view {
+    animation: mobileSlideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
   }
 
-  .mobile-nav-btn.active i {
-    transform: scale(1.15) translateY(-2px);
-    filter: drop-shadow(0 0 6px rgba(255, 79, 163, 0.6));
+  /* Smooth chat panel transitions */
+  .chat-sub-panel {
+    transition: opacity 0.35s ease, transform 0.35s ease !important;
   }
-  
-  /* Badge inside mobile nav */
-  .mobile-nav-btn .nav-badge {
-    position: absolute;
-    top: 4px;
-    right: 14px;
-    background: #ff4fa3;
-    color: white;
-    font-size: 9px;
-    font-weight: 700;
-    padding: 2px 6px;
-    border-radius: 10px;
-    min-width: 14px;
-    height: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 8px rgba(255, 79, 163, 0.5);
-    border: 1px solid rgba(13, 6, 28, 0.855);
+
+  .chat-sub-panel.active {
+    animation: mobileFadeScale 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  }
+
+  /* Smooth chat list to chat window transition */
+  .chats-layout-grid .chat-inbox-sidebar,
+  .chats-layout-grid .chat-window-main {
+    transition: opacity 0.3s ease, transform 0.3s ease !important;
+  }
+
+  .chats-layout-grid.chatting .chat-window-main {
+    animation: mobileChatSlideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  }
+
+  /* Smooth card interactions */
+  .feed-card,
+  .glass-panel,
+  .chat-thread-item,
+  .story-card {
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.3s ease,
+                opacity 0.3s ease !important;
+  }
+
+  .feed-card:active,
+  .chat-thread-item:active {
+    transform: scale(0.98) !important;
+    transition: transform 0.15s ease !important;
+  }
+
+  /* Smooth modal/overlay transitions */
+  .story-viewer-overlay,
+  #comments-modal,
+  #share-modal {
+    transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                visibility 0.3s ease !important;
+  }
+
+  .story-viewer-overlay.active .story-viewer-card,
+  .story-viewer-overlay.active .comments-card,
+  .story-viewer-overlay.active .share-card {
+    animation: mobileModalPop 0.4s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+  }
+
+  /* Adjust chat window height since footer is hidden */
+  .chat-window-main {
+    height: calc(100vh - 100px) !important;
+    max-height: 90vh !important;
+  }
+
+  /* Smooth scrolling everywhere */
+  .chat-feed-area,
+  .chat-threads-list,
+  .main-content,
+  .content-view {
+    scroll-behavior: smooth !important;
+    -webkit-overflow-scrolling: touch !important;
   }
 }
 
